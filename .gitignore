@@ -1,0 +1,13 @@
+bin/
+obj/
+.vs/
+.vscode/
+.DS_Store
+*.user
+*.suo
+*.swp
+# ortama özgü ayarlar
+**/appsettings.Development.json
+**/appsettings.Local.json
+# user-secrets dosyaları repo dışında kalır
+**/secrets.json
