@@ -1,0 +1,14 @@
+name: .NET Build
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore
+        run: dotnet restore NotApp.csproj
+      - name: Build
+        run: dotnet build NotApp.csproj --configuration Release --no-restore
