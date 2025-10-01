@@ -1,8 +1,41 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Not Paylaşım Platformu";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h1 class="page-title">MTÜ Not Paylaşım Platformu</h1>
+
+<!-- Arama + Filtre (DB'den dinamik geliyor) -->
+<div class="mb-3">
+    @await Html.PartialAsync("_Filters")
+</div>
+
+<!-- Örnek kartlar (istersen sonra dinamik listeye çeviririz) -->
+<div class="note-card">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <div class="note-title">SUDE</div>
+            <div class="meta mt-1">
+                🏛️ Fakülte: Mühendislik ve Doğa Bilimleri<br/>
+                🏫 Bölüm: Bilgisayar Mühendisliği<br/>
+                🎓 Sınıf: 4. Sınıf<br/>
+                📘 Ders: YMH219 - Nesne Tabanlı Programlama
+            </div>
+        </div>
+        <a class="btn-accent" href="#">Görüntüle</a>
+    </div>
+</div>
+
+<div class="note-card">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <div class="note-title">EMRE</div>
+            <div class="meta mt-1">
+                🏛️ Fakülte: Mühendislik ve Doğa Bilimleri<br/>
+                🏫 Bölüm: Bilgisayar Mühendisliği<br/>
+                🎓 Sınıf: 3. Sınıf<br/>
+                📘 Ders: MAT205 - Diferansiyel Denklemler
+            </div>
+        </div>
+        <a class="btn-accent" href="#">Görüntüle</a>
+    </div>
 </div>

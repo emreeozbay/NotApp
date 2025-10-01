@@ -1,0 +1,59 @@
+@using Microsoft.EntityFrameworkCore
+@inject NotApp.Data.ApplicationDbContext Db
+@{
+    var selectedQ       = Context.Request.Query["q"].ToString();
+    var selectedFaculty = Context.Request.Query["faculty"].ToString();
+    var selectedClass   = Context.Request.Query["classLevel"].ToString();
+
+    var faculties = await Db.NoteItems.AsNoTracking()
+        .Select(x => x.Faculty).Where(s => !string.IsNullOrEmpty(s))
+        .Distinct().OrderBy(s => s).ToListAsync();
+
+    var classLevels = await Db.NoteItems.AsNoTracking()
+        .Select(x => x.ClassLevel).Where(s => !string.IsNullOrEmpty(s))
+        .Distinct().OrderBy(s => s).ToListAsync();
+}
+
+<style>
+  /* Bu partial her sayfada tıklanabilirliği garanti etsin */
+  .card-glass, .card-glass::before, .card-glass::after { pointer-events: none; }
+  .card-glass * { pointer-events: auto; }
+</style>
+
+<form method="get" asp-controller="Notes" asp-action="Index"
+      class="card card-glass p-3 position-relative" style="z-index:1;">
+  <div class="row g-2 align-items-center">
+    <div class="col-12">
+      <div class="input-group input-group-lg">
+        <span class="input-group-text">🔎</span>
+        <input name="q" value="@selectedQ" class="form-control" placeholder="Not ara..." autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <select name="faculty" class="form-select">
+        <option value="">Fakülte Seç</option>
+        @foreach (var f in faculties)
+        {
+            if (selectedFaculty == f) { <option value="@f" selected>@f</option>; }
+            else { <option value="@f">@f</option>; }
+        }
+      </select>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <select name="classLevel" class="form-select">
+        <option value="">Sınıf Seç</option>
+        @foreach (var c in classLevels)
+        {
+            if (selectedClass == c) { <option value="@c" selected>@c</option>; }
+            else { <option value="@c">@c</option>; }
+        }
+      </select>
+    </div>
+
+    <div class="col-12 col-md-2 text-md-end">
+      <button class="btn btn-primary btn-lg w-100" type="submit">Filtrele</button>
+    </div>
+  </div>
+</form>

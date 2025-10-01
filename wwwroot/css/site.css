@@ -1,53 +1,102 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}
+/* --- Dark Theme (NotuPaylas tarzı) --- */
 :root{
-  --bg-1:#0b1625;
-  --bg-2:#0e2233;
-  --card:#15263c;
-  --card-border:rgba(255,255,255,.06);
+  --bg-1:#0e1a27;
+  --bg-2:#0b1520;
+  --card:#172437;
+  --text:#e8eef6;
+  --muted:#a8b3c2;
+  --accent:#e23d3d;     /* Görüntüle butonu */
+  --outline:#26344a;
 }
 
-body.bg-app {
-  background: radial-gradient(1200px 600px at 20% -10%, #163042 0%, transparent 60%),
-              radial-gradient(1200px 600px at 80% 110%, #182744 0%, transparent 60%),
-              linear-gradient(180deg, var(--bg-1), var(--bg-2));
-  min-height: 100vh;
+html,body{height:100%;}
+body{
+  background: radial-gradient(1200px 600px at 20% -10%, #142132, #0b1520) fixed;
+  color:var(--text);
 }
 
-.gradient-nav{
-  background: linear-gradient(90deg, #0f2130, #122a3f);
+/* Konteyner genişliği */
+.container-xl{max-width:1200px;}
+
+/* Navbar */
+.app-navbar{
+  background: linear-gradient(180deg,#0f2031,#0b1826);
+  border-bottom:1px solid #122335;
+  position: sticky; top: 0; z-index: 2000;
+}
+.brand-logo{width:32px;height:32px;border-radius:50%;object-fit:cover;}
+.brand-title{font-weight:600;letter-spacing:.2px;}
+
+/* Büyük sayfa başlığı */
+.page-title{
+  font-size:clamp(24px,4vw,40px);
+  font-weight:800;
+  text-shadow:0 2px 12px rgba(0,0,0,.35);
+  margin-bottom:16px;
 }
 
-.card-glass{
-  background: color-mix(in srgb, var(--card) 88%, rgba(255,255,255,.02));
-  border: 1px solid var(--card-border);
-  border-radius: 1.25rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+/* Arama kutusu */
+.search-wrap{
+  background:rgba(15,29,45,.65);
+  border:1px solid var(--outline);
+  border-radius:14px;
+  padding:12px 14px;
+  display:flex;gap:10px;align-items:center;
+  position: relative;
+  z-index: 1;
+}
+.search-wrap .icon{opacity:.8;}
+.search-input{
+  background:transparent;border:none;outline:none;color:var(--text);
+  flex:1; font-size:15px;
+}
+.search-input::placeholder{color:var(--muted);}
+
+/* Overlay fix – klikleri engellemesin */
+.search-wrap::before {
+  content:"";
+  position:absolute; inset:0;
+  border-radius:14px;
+  background:rgba(15,29,45,.65);
+  border:1px solid var(--outline);
+  z-index:0;
+  pointer-events:none;   /* kritik satır */
 }
 
-input.form-control, select.form-select, .input-group-text{
-  background-color: rgba(255,255,255,.06);
-  color: #e6eef7;
-  border-color: var(--card-border);
+/* Select’ler */
+.dark-select{
+  background:#0f2236; color:var(--text);
+  border:1px solid var(--outline); border-radius:10px;
+  padding:10px 12px;
+  -webkit-appearance: menulist;  /* Safari fix */
+  appearance: auto;
 }
-input.form-control::placeholder{ color:#9fb2c8; }
+
+/* Kart */
+.note-card{
+  background:linear-gradient(180deg,#1a2a40,#172437);
+  border:1px solid #1f3350;
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+.note-card + .note-card{margin-top:18px;}
+.note-title{font-weight:700;letter-spacing:.3px;}
+.meta{color:var(--muted);}
+
+/* Görüntüle butonu */
+.btn-accent{
+  background:var(--accent); border:none; color:white;
+  padding:10px 14px; border-radius:12px; font-weight:600;
+}
+.btn-accent:hover{filter:brightness(.95);}
+
+/* Footer */
+.app-footer{
+  border-top:1px solid #122335;
+  background:#0b1520; color:var(--muted);
+  padding:18px 0; margin-top:32px;
+}
+
+/* İçerik navbar altında kaybolmasın */
+main, .container-xl { position: relative; z-index: 1; }
