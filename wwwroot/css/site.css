@@ -20,3 +20,34 @@ html {
 body {
   margin-bottom: 60px;
 }
+:root{
+  --bg-1:#0b1625;
+  --bg-2:#0e2233;
+  --card:#15263c;
+  --card-border:rgba(255,255,255,.06);
+}
+
+body.bg-app {
+  background: radial-gradient(1200px 600px at 20% -10%, #163042 0%, transparent 60%),
+              radial-gradient(1200px 600px at 80% 110%, #182744 0%, transparent 60%),
+              linear-gradient(180deg, var(--bg-1), var(--bg-2));
+  min-height: 100vh;
+}
+
+.gradient-nav{
+  background: linear-gradient(90deg, #0f2130, #122a3f);
+}
+
+.card-glass{
+  background: color-mix(in srgb, var(--card) 88%, rgba(255,255,255,.02));
+  border: 1px solid var(--card-border);
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+input.form-control, select.form-select, .input-group-text{
+  background-color: rgba(255,255,255,.06);
+  color: #e6eef7;
+  border-color: var(--card-border);
+}
+input.form-control::placeholder{ color:#9fb2c8; }

@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 var cs = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(cs, ServerVersion.AutoDetect(cs))); // CharSetBehavior yok
+    options.UseMySql(cs, ServerVersion.AutoDetect(cs)));
 
 builder.Services.AddControllersWithViews();
 
@@ -20,18 +20,11 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapPost("/seed", async (ApplicationDbContext db) =>
-{
-    db.Notes.Add(new Note { Title = "Merhaba MySQL", Content = "İlk kayıt" });
-    await db.SaveChangesAsync();
-    return Results.Ok();
-});
-app.MapGet("/notes", async (ApplicationDbContext db) =>
-    await db.Notes.OrderByDescending(n => n.Id).ToListAsync());
+    pattern: "{controller=Notes}/{action=Index}/{id?}");
 
 app.Run();

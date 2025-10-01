@@ -1,0 +1,84 @@
+@model NotApp.Controllers.NotesIndexVM
+@{
+    ViewData["Title"] = "Notlar";
+}
+
+<div class="container py-4">
+    <div class="mb-4">
+        <form method="get" class="card card-glass p-3">
+            <div class="row g-2 align-items-center">
+                <div class="col-12">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input name="q" value="@Model.Q" class="form-control" placeholder="Not ara..." />
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <select name="faculty" class="form-select">
+                        <option value="">Fakülte Seç</option>
+                        @foreach (var f in Model.Faculties)
+                        { <option value="@f" selected="@(Model.Faculty==f)">@f</option> }
+                    </select>
+                </div>
+                <div class="col-6 col-md-3">
+                    <select name="classLevel" class="form-select">
+                        <option value="">Sınıf Seç</option>
+                        @foreach (var c in Model.ClassLevels)
+                        { <option value="@c" selected="@(Model.ClassLevel==c)">@c</option> }
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-2 text-md-end">
+                    <button class="btn btn-primary btn-lg w-100">Filtrele</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <h1 class="display-5 fw-bold text-light mb-4">MTÜ Not Paylaşım Platformu</h1>
+
+    <div class="vstack gap-4">
+        @if (!Model.Items.Any())
+        {
+            <div class="card card-glass p-4">
+                <div class="text-secondary">Kriterlere uygun not bulunamadı.</div>
+            </div>
+        }
+        else
+        {
+            foreach (var n in Model.Items)
+            {
+                <div class="card card-glass p-4">
+                    <div class="d-flex flex-column flex-md-row justify-content-between">
+                        <div class="me-3">
+                            <div class="text-uppercase fw-bold text-light fs-5">@n.StudentDisplayName</div>
+                            <div class="text-secondary small">@n.StudentUserName</div>
+                            <ul class="list-unstyled mt-3 mb-0 text-light">
+                                <li class="mb-1"><span class="me-2">🏛️</span><strong>Fakülte:</strong> @n.Faculty</li>
+                                <li class="mb-1"><span class="me-2">🏢</span><strong>Bölüm:</strong> @n.Department</li>
+                                <li class="mb-1"><span class="me-2">🎓</span><strong>Sınıf:</strong> @n.ClassLevel</li>
+                                <li class="mb-1"><span class="me-2">📚</span><strong>Ders:</strong> @n.CourseCode — @n.CourseName</li>
+                            </ul>
+                        </div>
+                        <div class="mt-3 mt-md-0 text-md-end">
+                            @if (!string.IsNullOrWhiteSpace(n.FileUrl))
+                            {
+                                <a class="btn btn-danger btn-lg" href="@n.FileUrl" target="_blank" rel="noopener">
+                                    <i class="bi bi-download me-2"></i>Görüntüle
+                                </a>
+                            }
+                            else
+                            {
+                                <button class="btn btn-danger btn-lg" disabled>
+                                    <i class="bi bi-download me-2"></i>Görüntüle
+                                </button>
+                                <div class="small text-secondary mt-2">(Dosya linki eklenmemiş)</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
