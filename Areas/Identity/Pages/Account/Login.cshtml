@@ -1,0 +1,48 @@
+@page
+@model NotApp.Areas.Identity.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Giriş Yap";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card p-4 shadow-lg" style="border-radius:16px;">
+            
+            <!-- Logo -->
+            <div class="text-center mb-4">
+                <img src="~/img/mtu-logo.png" alt="MTÜ" style="width:80px; height:auto;" />
+            </div>
+
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Input.Email" class="form-label fw-semibold text-dark">E-posta Adresi</label>
+                    <input asp-for="Input.Email" class="form-control" autocomplete="username" />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Input.Password" class="form-label fw-semibold text-dark">Şifre</label>
+                    <input asp-for="Input.Password" class="form-control" type="password" autocomplete="current-password" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input asp-for="Input.RememberMe" class="form-check-input" />
+                    <label asp-for="Input.RememberMe" class="form-check-label text-dark">Beni Hatırla</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
+            </form>
+
+            <div class="text-center mt-3">
+                <span>Hesabınız yok mu?</span>
+                <a asp-page="./Register" class="text-decoration-none">Kayıt Ol</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
