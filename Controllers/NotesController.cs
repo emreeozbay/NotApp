@@ -87,23 +87,39 @@ namespace NotApp.Controllers
         }
 
         // -------------------- CREATE (POST) --------------------
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(NoteItem model)
-        {
-            if (!ModelState.IsValid)
-            {
-                await FillDropdownsAsync();
-                return View(model);
-            }
+// CREATE (POST) – dosya yüklemeli
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Create(NoteItem model, IFormFile? file)
+{
+    if (!ModelState.IsValid)
+        return View(model);
 
-            model.CreatedAt = DateTime.UtcNow; // veya DateTime.Now
-            _db.NoteItems.Add(model);
-            await _db.SaveChangesAsync();
+    // Dosya yüklendiyse kaydet
+    if (file != null && file.Length > 0)
+    {
+        var uploadsRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+        Directory.CreateDirectory(uploadsRoot);
 
-            TempData["ok"] = "Not başarıyla eklendi.";
-            return RedirectToAction(nameof(Index));
-        }
+        var safeFileName = Path.GetFileNameWithoutExtension(file.FileName);
+        var ext = Path.GetExtension(file.FileName);
+        var finalName = $"{safeFileName}_{Guid.NewGuid():N}{ext}";
+        var fullPath = Path.Combine(uploadsRoot, finalName);
+
+        using (var stream = System.IO.File.Create(fullPath))
+            await file.CopyToAsync(stream);
+
+        model.FileUrl = $"/uploads/{finalName}";
+    }
+
+    model.CreatedAt = DateTime.UtcNow;
+    _db.NoteItems.Add(model);
+    await _db.SaveChangesAsync();
+
+    TempData["ok"] = "Not başarıyla yüklendi.";
+    return RedirectToAction(nameof(Index));
+}
+
 
         // -------------------- SEED (örnek veri) --------------------
         [HttpPost("/seeditems")]

@@ -100,3 +100,34 @@ body{
 
 /* İçerik navbar altında kaybolmasın */
 main, .container-xl { position: relative; z-index: 1; }
+
+/* ---- NAVBAR: lacivert-mavi tonlar ---- */
+.topbar{
+  background: linear-gradient(180deg,#0f2031 0%, #0b1826 100%);
+  color:#fff; padding:16px 0; position:sticky; top:0; z-index:1100;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.brand-logo{ width:32px; height:32px; border-radius:50%; object-fit:cover }
+.brand-title{ font-weight:700; letter-spacing:.2px; font-size:18px }
+
+.menu-btn{ width:44px; height:36px; border:0; background:transparent; display:grid; gap:5px }
+.menu-btn span{ display:block; height:3px; background:#fff; border-radius:2px }
+
+/* Slide menu lacivert */
+.slide-menu{
+  background:#0e2336; color:#fff; border-top:1px solid rgba(255,255,255,.08);
+  display:none;
+}
+.slide-menu.open{ display:block }
+.slide-menu a, .slide-menu .as-link{
+  display:block; padding:12px 22px; color:#fff; text-decoration:none; font-weight:600
+}
+.slide-menu a:hover{ background:rgba(255,255,255,.06) }
+.slide-menu .as-link{ background:transparent; border:0; text-align:left; width:100% }
+
+/* (Varsa kırmızı bar stillerini kaldır/üzerine yaz) */
+.brand-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #ffffff; /* lacivert üst barda beyaz görünmesi için */
+}
