@@ -131,3 +131,12 @@ main, .container-xl { position: relative; z-index: 1; }
     font-weight: 600;
     color: #ffffff; /* lacivert üst barda beyaz görünmesi için */
 }
+.btn-navy {
+    background-color: #0d1b2a; /* koyu lacivert */
+    color: #fff;
+    border: none;
+}
+.btn-navy:hover {
+    background-color: #1b263b; /* hover için daha açık */
+    color: #fff;
+}

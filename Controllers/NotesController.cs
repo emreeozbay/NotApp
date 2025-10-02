@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NotApp.Data;
@@ -8,6 +9,10 @@ namespace NotApp.Controllers
     public class NotesController : Controller
     {
         private readonly ApplicationDbContext _db;
+
+        // 20 MB sınır, kabul edilebilir uzantılar
+        private static readonly string[] AllowedExt = [".pdf", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".png", ".jpg", ".jpeg"];
+        private const long MaxFileBytes = 20 * 1024 * 1024;
 
         public NotesController(ApplicationDbContext db) => _db = db;
 
@@ -44,12 +49,16 @@ namespace NotApp.Controllers
             var faculties = await _db.NoteItems.AsNoTracking()
                 .Select(x => x.Faculty)
                 .Where(s => !string.IsNullOrEmpty(s))
-                .Distinct().OrderBy(s => s).ToListAsync();
+                .Distinct()
+                .OrderBy(s => s)
+                .ToListAsync();
 
             var classLevels = await _db.NoteItems.AsNoTracking()
                 .Select(x => x.ClassLevel)
                 .Where(s => !string.IsNullOrEmpty(s))
-                .Distinct().OrderBy(s => s).ToListAsync();
+                .Distinct()
+                .OrderBy(s => s)
+                .ToListAsync();
 
             var vm = new NotesIndexVM
             {
@@ -70,16 +79,21 @@ namespace NotApp.Controllers
             ViewBag.Faculties = await _db.NoteItems.AsNoTracking()
                 .Select(x => x.Faculty)
                 .Where(s => !string.IsNullOrEmpty(s))
-                .Distinct().OrderBy(s => s).ToListAsync();
+                .Distinct()
+                .OrderBy(s => s)
+                .ToListAsync();
 
             ViewBag.ClassLevels = await _db.NoteItems.AsNoTracking()
                 .Select(x => x.ClassLevel)
                 .Where(s => !string.IsNullOrEmpty(s))
-                .Distinct().OrderBy(s => s).ToListAsync();
+                .Distinct()
+                .OrderBy(s => s)
+                .ToListAsync();
         }
 
         // -------------------- CREATE (GET) --------------------
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Create()
         {
             await FillDropdownsAsync();
@@ -87,39 +101,72 @@ namespace NotApp.Controllers
         }
 
         // -------------------- CREATE (POST) --------------------
-// CREATE (POST) – dosya yüklemeli
-[HttpPost]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> Create(NoteItem model, IFormFile? file)
-{
-    if (!ModelState.IsValid)
-        return View(model);
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(NoteItem model, IFormFile? file)
+        {
+            // Dosya kontrolü (varsa)
+            if (file is not null && file.Length > 0)
+            {
+                if (file.Length > MaxFileBytes)
+                    ModelState.AddModelError(nameof(file), "Dosya boyutu en fazla 20 MB olabilir.");
 
-    // Dosya yüklendiyse kaydet
-    if (file != null && file.Length > 0)
-    {
-        var uploadsRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-        Directory.CreateDirectory(uploadsRoot);
+                var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+                if (!AllowedExt.Contains(ext))
+                    ModelState.AddModelError(nameof(file), $"Bu dosya türü desteklenmiyor ({ext}).");
+            }
 
-        var safeFileName = Path.GetFileNameWithoutExtension(file.FileName);
-        var ext = Path.GetExtension(file.FileName);
-        var finalName = $"{safeFileName}_{Guid.NewGuid():N}{ext}";
-        var fullPath = Path.Combine(uploadsRoot, finalName);
+            if (!ModelState.IsValid)
+            {
+                await FillDropdownsAsync();
+                return View(model);
+            }
 
-        using (var stream = System.IO.File.Create(fullPath))
-            await file.CopyToAsync(stream);
+            // Dosya yükleme
+            if (file is not null && file.Length > 0)
+            {
+                var uploadsRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                Directory.CreateDirectory(uploadsRoot);
 
-        model.FileUrl = $"/uploads/{finalName}";
-    }
+                var baseName = Path.GetFileNameWithoutExtension(file.FileName);
+                var ext = Path.GetExtension(file.FileName);
+                var finalName = $"{Sanitize(baseName)}_{Guid.NewGuid():N}{ext}";
+                var fullPath = Path.Combine(uploadsRoot, finalName);
 
-    model.CreatedAt = DateTime.UtcNow;
-    _db.NoteItems.Add(model);
-    await _db.SaveChangesAsync();
+                using var stream = System.IO.File.Create(fullPath);
+                await file.CopyToAsync(stream);
 
-    TempData["ok"] = "Not başarıyla yüklendi.";
-    return RedirectToAction(nameof(Index));
-}
+                model.FileUrl = $"/uploads/{finalName}";
+            }
 
+            model.CreatedAt = DateTime.UtcNow;
+
+            _db.NoteItems.Add(model);
+            await _db.SaveChangesAsync();
+
+            TempData["ok"] = "Not başarıyla yüklendi.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Basit dosya adı temizleyici
+        private static string Sanitize(string input)
+        {
+            // Türkçe karakterleri ve boşlukları sadeleştir
+            var s = input.Trim()
+                         .Replace(' ', '_')
+                         .Replace('ç', 'c').Replace('Ç', 'C')
+                         .Replace('ğ', 'g').Replace('Ğ', 'G')
+                         .Replace('ı', 'i').Replace('İ', 'I')
+                         .Replace('ö', 'o').Replace('Ö', 'O')
+                         .Replace('ş', 's').Replace('Ş', 'S')
+                         .Replace('ü', 'u').Replace('Ü', 'U');
+
+            foreach (var ch in Path.GetInvalidFileNameChars())
+                s = s.Replace(ch, '_');
+
+            return string.IsNullOrWhiteSpace(s) ? "dosya" : s;
+        }
 
         // -------------------- SEED (örnek veri) --------------------
         [HttpPost("/seeditems")]

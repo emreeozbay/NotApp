@@ -3,47 +3,49 @@
     ViewData["Title"] = "Not Yükle";
 }
 
-<h1 class="h3 mb-3">Not Yükle</h1>
+<h1 class="h3 mb-3 text-white">Not Yükle</h1>
 
-<div class="card card-glass p-4">
+<div class="card p-4 shadow-lg" style="border-radius:16px;">
   <form asp-action="Create" method="post" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
 
     <div class="row g-3">
 
       <div class="col-12">
-        <label class="form-label">Başlık</label>
+        <label class="form-label text-dark fw-semibold">Başlık</label>
         <input asp-for="Title" class="form-control" required />
         <span class="text-danger" asp-validation-for="Title"></span>
       </div>
 
       <div class="col-12">
-        <label class="form-label">Açıklama</label>
+        <label class="form-label text-dark fw-semibold">Açıklama</label>
         <textarea asp-for="Description" class="form-control" rows="3"></textarea>
       </div>
 
       <div class="col-12">
-        <label class="form-label">Dosya</label>
+        <label class="form-label text-dark fw-semibold">Dosya</label>
         <input type="file" name="file" class="form-control" />
       </div>
 
       <div class="col-md-6">
-        <label class="form-label">Fakülte</label>
-        <select class="form-select" asp-for="Faculty" data-faculty>
+        <label class="form-label text-dark fw-semibold">Fakülte</label>
+        <select class="form-select" asp-for="Faculty" id="Faculty" data-faculty>
           <option value="">Fakülte Seçiniz</option>
           <!-- JS dolduracak -->
         </select>
+        <span class="text-danger" asp-validation-for="Faculty"></span>
       </div>
 
       <div class="col-md-6">
-        <label class="form-label">Bölüm</label>
-        <select class="form-select" asp-for="Department" data-department disabled>
+        <label class="form-label text-dark fw-semibold">Bölüm</label>
+        <select class="form-select" asp-for="Department" id="Department" data-department disabled>
           <option value="">Önce Fakülte Seçiniz</option>
         </select>
+        <span class="text-danger" asp-validation-for="Department"></span>
       </div>
 
       <div class="col-md-4">
-        <label class="form-label">Sınıf</label>
+        <label class="form-label text-dark fw-semibold">Sınıf</label>
         <select asp-for="ClassLevel" class="form-select">
           <option value="">Sınıf Seç</option>
           <option>1. Sınıf</option><option>2. Sınıf</option>
@@ -52,18 +54,18 @@
       </div>
 
       <div class="col-md-4">
-        <label class="form-label">Ders Kodu</label>
+        <label class="form-label text-dark fw-semibold">Ders Kodu</label>
         <input asp-for="CourseCode" class="form-control" />
       </div>
 
       <div class="col-md-4">
-        <label class="form-label">Ders Adı</label>
+        <label class="form-label text-dark fw-semibold">Ders Adı</label>
         <input asp-for="CourseName" class="form-control" placeholder="Örnek: Veri Yapıları" />
       </div>
 
       <div class="col-12 d-flex justify-content-end">
-        <a asp-action="Index" class="btn btn-outline-light me-2">Vazgeç</a>
-        <button class="btn btn-danger">Yükle</button>
+        <a asp-action="Index" class="btn btn-outline-secondary me-2">Vazgeç</a>
+        <button type="submit" class="btn btn-navy">Yükle</button>
       </div>
     </div>
   </form>
