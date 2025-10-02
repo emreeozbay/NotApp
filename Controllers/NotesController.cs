@@ -11,30 +11,28 @@ namespace NotApp.Controllers
 
         public NotesController(ApplicationDbContext db) => _db = db;
 
-        // GET: /Notes
+        // -------------------- LISTE --------------------
         [HttpGet]
         public async Task<IActionResult> Index(string? q, string? faculty, string? classLevel)
         {
-            // --- Base query
             var query = _db.NoteItems
                 .AsNoTracking()
-                .OrderByDescending(x => x.Id)
+                .OrderByDescending(x => x.CreatedAt)
+                .ThenByDescending(x => x.Id)
                 .AsQueryable();
 
-            // --- Search
             if (!string.IsNullOrWhiteSpace(q))
             {
                 var term = q.Trim();
                 query = query.Where(x =>
-                    (x.Title != null && x.Title.Contains(term)) ||
-                    (x.Description != null && x.Description.Contains(term)) ||
-                    (x.StudentDisplayName != null && x.StudentDisplayName.Contains(term)) ||
-                    (x.Department != null && x.Department.Contains(term)) ||
-                    (x.CourseCode != null && x.CourseCode.Contains(term)) ||
-                    (x.CourseName != null && x.CourseName.Contains(term)));
+                    (x.Title ?? "").Contains(term) ||
+                    (x.Description ?? "").Contains(term) ||
+                    (x.StudentDisplayName ?? "").Contains(term) ||
+                    (x.Department ?? "").Contains(term) ||
+                    (x.CourseCode ?? "").Contains(term) ||
+                    (x.CourseName ?? "").Contains(term));
             }
 
-            // --- Filters
             if (!string.IsNullOrWhiteSpace(faculty))
                 query = query.Where(x => x.Faculty == faculty.Trim());
 
@@ -43,22 +41,15 @@ namespace NotApp.Controllers
 
             var items = await query.ToListAsync();
 
-            // --- Dropdown kaynakları (null/boş ayıklanmış)
-            var faculties = await _db.NoteItems
-                .AsNoTracking()
+            var faculties = await _db.NoteItems.AsNoTracking()
                 .Select(x => x.Faculty)
-                .Where(s => s != null && s != "")
-                .Distinct()
-                .OrderBy(s => s)
-                .ToListAsync();
+                .Where(s => !string.IsNullOrEmpty(s))
+                .Distinct().OrderBy(s => s).ToListAsync();
 
-            var classLevels = await _db.NoteItems
-                .AsNoTracking()
+            var classLevels = await _db.NoteItems.AsNoTracking()
                 .Select(x => x.ClassLevel)
-                .Where(s => s != null && s != "")
-                .Distinct()
-                .OrderBy(s => s)
-                .ToListAsync();
+                .Where(s => !string.IsNullOrEmpty(s))
+                .Distinct().OrderBy(s => s).ToListAsync();
 
             var vm = new NotesIndexVM
             {
@@ -73,7 +64,48 @@ namespace NotApp.Controllers
             return View(vm);
         }
 
-        // Örnek veri tohumlama: POST /seeditems
+        // -------------------- YARDIMCI: DROPDOWN --------------------
+        private async Task FillDropdownsAsync()
+        {
+            ViewBag.Faculties = await _db.NoteItems.AsNoTracking()
+                .Select(x => x.Faculty)
+                .Where(s => !string.IsNullOrEmpty(s))
+                .Distinct().OrderBy(s => s).ToListAsync();
+
+            ViewBag.ClassLevels = await _db.NoteItems.AsNoTracking()
+                .Select(x => x.ClassLevel)
+                .Where(s => !string.IsNullOrEmpty(s))
+                .Distinct().OrderBy(s => s).ToListAsync();
+        }
+
+        // -------------------- CREATE (GET) --------------------
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            await FillDropdownsAsync();
+            return View(new NoteItem());
+        }
+
+        // -------------------- CREATE (POST) --------------------
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(NoteItem model)
+        {
+            if (!ModelState.IsValid)
+            {
+                await FillDropdownsAsync();
+                return View(model);
+            }
+
+            model.CreatedAt = DateTime.UtcNow; // veya DateTime.Now
+            _db.NoteItems.Add(model);
+            await _db.SaveChangesAsync();
+
+            TempData["ok"] = "Not başarıyla eklendi.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // -------------------- SEED (örnek veri) --------------------
         [HttpPost("/seeditems")]
         public async Task<IActionResult> Seed()
         {
@@ -87,7 +119,8 @@ namespace NotApp.Controllers
                         Faculty="Mühendislik ve Doğa Bilimleri Fakültesi",
                         Department="Bilgisayar Mühendisliği",
                         ClassLevel="4. Sınıf",
-                        CourseCode="YMH219", CourseName="Nesne Tabanlı Programlama"
+                        CourseCode="YMH219", CourseName="Nesne Tabanlı Programlama",
+                        CreatedAt=DateTime.UtcNow
                     },
                     new NoteItem {
                         Title="EMRE", Description="emre",
@@ -95,7 +128,8 @@ namespace NotApp.Controllers
                         Faculty="Mühendislik ve Doğa Bilimleri Fakültesi",
                         Department="Bilgisayar Mühendisliği",
                         ClassLevel="3. Sınıf",
-                        CourseCode="MAT205", CourseName="Diferansiyel Denklemler"
+                        CourseCode="MAT205", CourseName="Diferansiyel Denklemler",
+                        CreatedAt=DateTime.UtcNow
                     },
                     new NoteItem {
                         Title="ÖRNEK NOT - HOŞ GELDİN", Description="Genel paylaşım alanına örnek içerik.",
@@ -103,7 +137,8 @@ namespace NotApp.Controllers
                         Faculty="Mühendislik ve Doğa Bilimleri Fakültesi",
                         Department="Bilgisayar Mühendisliği",
                         ClassLevel="1. Sınıf",
-                        CourseCode="GEN101", CourseName="Üniversiteye Giriş"
+                        CourseCode="GEN101", CourseName="Üniversiteye Giriş",
+                        CreatedAt=DateTime.UtcNow
                     }
                 };
 

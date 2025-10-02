@@ -6,11 +6,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 var cs = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// DbContext (MySQL kullanıyorsun)
+// DbContext (MySQL)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(cs, ServerVersion.AutoDetect(cs)));
 
-// Identity servislerini ekle
+// Identity
 builder.Services
     .AddDefaultIdentity<IdentityUser>(options =>
     {
@@ -18,7 +18,7 @@ builder.Services
     })
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// MVC + Razor Pages (Identity UI için)
+// MVC + Razor Pages (Identity UI)
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
@@ -26,22 +26,29 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
+    // Production
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+    app.UseHttpsRedirection();   // 🔒 Sadece prod'da
+}
+else
+{
+    // Development
+    // app.UseDeveloperExceptionPage();  // istersen aç
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); // <--- önemli
+app.UseAuthentication();
 app.UseAuthorization();
 
+// Varsayılan rota: Notes/Index
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Notes}/{action=Index}/{id?}");
 
-app.MapRazorPages(); // <--- Identity için gerekli
+app.MapRazorPages();
 
 app.Run();
