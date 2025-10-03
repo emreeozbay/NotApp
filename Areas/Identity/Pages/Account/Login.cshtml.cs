@@ -23,6 +23,8 @@ namespace NotApp.Areas.Identity.Pages.Account
         {
             [Required]
             [EmailAddress]
+            [RegularExpression(@"^[^@\s]+@ozal\.edu\.tr$", 
+                ErrorMessage = "Sadece ozal.edu.tr uzantılı e-posta ile giriş yapabilirsiniz.")]
             public string Email { get; set; } = "";
 
             [Required]

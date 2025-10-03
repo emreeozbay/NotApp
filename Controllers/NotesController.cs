@@ -34,7 +34,6 @@ namespace NotApp.Controllers
                     (x.Description ?? "").Contains(term) ||
                     (x.StudentDisplayName ?? "").Contains(term) ||
                     (x.Department ?? "").Contains(term) ||
-                    (x.CourseCode ?? "").Contains(term) ||
                     (x.CourseName ?? "").Contains(term));
             }
 
@@ -182,7 +181,8 @@ namespace NotApp.Controllers
                         Faculty="Mühendislik ve Doğa Bilimleri Fakültesi",
                         Department="Bilgisayar Mühendisliği",
                         ClassLevel="4. Sınıf",
-                        CourseCode="YMH219", CourseName="Nesne Tabanlı Programlama",
+                        CourseName="Nesne Tabanlı Programlama",
+                        DocumentType = DocumentType.LectureNote,
                         CreatedAt=DateTime.UtcNow
                     },
                     new NoteItem {
@@ -191,7 +191,8 @@ namespace NotApp.Controllers
                         Faculty="Mühendislik ve Doğa Bilimleri Fakültesi",
                         Department="Bilgisayar Mühendisliği",
                         ClassLevel="3. Sınıf",
-                        CourseCode="MAT205", CourseName="Diferansiyel Denklemler",
+                        CourseName="Diferansiyel Denklemler",
+                        DocumentType = DocumentType.ExamPaper,
                         CreatedAt=DateTime.UtcNow
                     },
                     new NoteItem {
@@ -200,7 +201,8 @@ namespace NotApp.Controllers
                         Faculty="Mühendislik ve Doğa Bilimleri Fakültesi",
                         Department="Bilgisayar Mühendisliği",
                         ClassLevel="1. Sınıf",
-                        CourseCode="GEN101", CourseName="Üniversiteye Giriş",
+                        CourseName="Üniversiteye Giriş",
+                        DocumentType = DocumentType.Other,
                         CreatedAt=DateTime.UtcNow
                     }
                 };

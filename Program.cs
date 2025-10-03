@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NotApp.Data;
+using NotApp.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,10 @@ builder.Services
     })
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// SMTP EmailSender (IEmailSender)
+builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
+builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
+
 // MVC + Razor Pages (Identity UI)
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -26,15 +32,13 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    // Production
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
-    app.UseHttpsRedirection();   // 🔒 Sadece prod'da
+    app.UseHttpsRedirection();
 }
 else
 {
-    // Development
-    // app.UseDeveloperExceptionPage();  // istersen aç
+    // app.UseDeveloperExceptionPage();
 }
 
 app.UseStaticFiles();

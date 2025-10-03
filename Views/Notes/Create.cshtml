@@ -22,6 +22,17 @@
         <textarea asp-for="Description" class="form-control" rows="3"></textarea>
       </div>
 
+      <!-- ✅ Belge Türü dropdown -->
+      <div class="col-12">
+        <label asp-for="DocumentType" class="form-label text-dark fw-semibold"></label>
+        <select asp-for="DocumentType"
+                class="form-select"
+                asp-items="Html.GetEnumSelectList<NotApp.Models.DocumentType>()">
+            <option value="">Seçiniz</option>
+        </select>
+        <span class="text-danger" asp-validation-for="DocumentType"></span>
+      </div>
+
       <div class="col-12">
         <label class="form-label text-dark fw-semibold">Dosya</label>
         <input type="file" name="file" class="form-control" />
@@ -44,7 +55,7 @@
         <span class="text-danger" asp-validation-for="Department"></span>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-6">
         <label class="form-label text-dark fw-semibold">Sınıf</label>
         <select asp-for="ClassLevel" class="form-select">
           <option value="">Sınıf Seç</option>
@@ -53,12 +64,9 @@
         </select>
       </div>
 
-      <div class="col-md-4">
-        <label class="form-label text-dark fw-semibold">Ders Kodu</label>
-        <input asp-for="CourseCode" class="form-control" />
-      </div>
+      <!-- ❌ Ders Kodu alanı kaldırıldı -->
 
-      <div class="col-md-4">
+      <div class="col-md-6">
         <label class="form-label text-dark fw-semibold">Ders Adı</label>
         <input asp-for="CourseName" class="form-control" placeholder="Örnek: Veri Yapıları" />
       </div>

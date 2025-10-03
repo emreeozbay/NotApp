@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace NotApp.Models
 {
@@ -15,10 +16,16 @@ namespace NotApp.Models
         public string Faculty    { get; set; } = null!;
         public string Department { get; set; } = null!;
         public string ClassLevel { get; set; } = null!;
-        public string CourseCode { get; set; } = null!;
+
+        // Ders Kodu alanı kaldırıldı
+        // public string CourseCode { get; set; } = null!;
+
         public string CourseName { get; set; } = null!;
 
         public string? FileUrl { get; set; }
+
+        [Display(Name = "Belge Türü")]
+        public DocumentType DocumentType { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
